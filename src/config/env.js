@@ -1,1 +1,1 @@
-export const API_URL = process.env.REACT_APP_API_URL || 'https://chartsynch-backend.vercel.app'
+export const API_URL = process.env.REACT_APP_API_URL || 'https://server-chartsynch.onrender.com'
