@@ -102,8 +102,18 @@ function App() {
               <Route path='/user/:id' element={<VerifyEmail />} />
               <Route path='/withdrawlogs' element={<RequireAuth><WithdrawalLogs /></RequireAuth>} />
               <Route path='/checkout' element={<RequireAuth><Checkout /></RequireAuth>} />
-              <Route path='/admin' element={<Admindashboard />}>
-              </Route>
+              {/* <Route path='/admin' element={<Admindashboard />}>
+              </Route> */}
+
+<Route
+  path="/admin"
+  element={
+    <div style={{ padding: 40, color: "red" }}>
+      <h1>Admin route works!</h1>
+      <p>React Router is rendering this page.</p>
+    </div>
+  }
+/>
               <Route path='/deposit' element={<RequireAuth><DepositHistory /></RequireAuth>} />
               <Route path='/about' element={<Aboutpage />} />
               <Route path='/faq' element={<Faq />} />
