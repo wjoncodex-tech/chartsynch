@@ -4,6 +4,7 @@ import { FiArrowRight } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MdClose } from 'react-icons/md'
 // Import Swiper React components
+// omo
 
 import { AiOutlineArrowLeft } from 'react-icons/ai'
 import Swal from 'sweetalert2'
