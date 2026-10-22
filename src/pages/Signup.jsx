@@ -10,6 +10,8 @@ import { SlPhone } from 'react-icons/sl'
 import { register } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
 import { sendEmailJS, EMAILJS_SERVICE_ID, EMAILJS_USER_ID, EMAILJS_GENERIC_TEMPLATE_ID } from '../config/thirdParty'
+import { Turnstile } from "@marsidev/react-turnstile";
+
 
 const Signup = () => {
   const navigate = useNavigate()
@@ -203,7 +205,7 @@ const Signup = () => {
   };
 
 
-
+const siteKeyx=process.env.YOUR_SITE_KEY
 
 
   return (
@@ -217,6 +219,7 @@ const Signup = () => {
           e.preventDefault()
           Signup()
         }}>
+          <Turnstile siteKey={siteKeyx} onSuccess={(t) => setTurnstileToken(t)} />
           <img src="/chartsynchlogo4.jpeg" alt="ChartSynch Logo" className="signup-logo" onClick={() => {
             navigate('/')
           }} />

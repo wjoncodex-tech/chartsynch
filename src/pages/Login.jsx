@@ -6,6 +6,8 @@ import { BsEye } from 'react-icons/bs'
 import Loader from '../components/Loader'
 import { login as loginRequest } from '../api/auth'
 import { useAuth } from '../context/AuthContext'
+// import { Turnstile } from "@marsidev/react-turnstile";
+
 const Login = () => {
   const navigate = useNavigate()
   const { login: setAuthToken } = useAuth()
@@ -85,6 +87,8 @@ const Login = () => {
     }
   };
 
+  // const siteKeyx=process.env.YOUR_SITE_KEY
+
   return (
     <main className='signup-page'>
       {
@@ -96,6 +100,7 @@ const Login = () => {
           e.preventDefault()
           login()
         }}>
+          {/* <Turnstile siteKey={siteKeyx} onSuccess={(t) => setTurnstileToken(t)} /> */}
           <img src="/chartsynchlogo4.jpeg" alt="ChartSynch Logo" className="login-logo" onClick={() => {
             navigate('/')
           }} />

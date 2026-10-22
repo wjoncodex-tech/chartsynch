@@ -268,5 +268,3 @@ const Userdashboardfundaccount = () => {
 }
 
 export default Userdashboardfundaccount
-
-// omo
