@@ -224,12 +224,6 @@ const siteKeyx = process.env.REACT_APP_TURNSTILE_SITE_KEY
           e.preventDefault()
           Signup()
         }}>
-        <Turnstile
-          siteKey={siteKeyx}
-          onSuccess={(t) => setTurnstileToken(t)}
-          onExpire={() => setTurnstileToken('')}
-          onError={() => setTurnstileToken('')}
-        />
           <img src="/chartsynchlogo4.jpeg" alt="ChartSynch Logo" className="signup-logo" onClick={() => {
             navigate('/')
           }} />
@@ -325,6 +319,12 @@ const siteKeyx = process.env.REACT_APP_TURNSTILE_SITE_KEY
             </div>
           </div>
           <span className="sub">Already have an account ? <Link to="/login">Sign in</Link></span>
+          <Turnstile
+            siteKey={siteKeyx}
+            onSuccess={(t) => setTurnstileToken(t)}
+            onExpire={() => setTurnstileToken('')}
+            onError={() => setTurnstileToken('')}
+          />
           <button type='submit'>Register</button>
         </form>
       </div>
