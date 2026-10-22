@@ -26,6 +26,7 @@ const Signup = () => {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loader, setLoader] = useState(false)
+  const [turnstileToken, setTurnstileToken] = useState('')
 
 
   const [location, setLocation] = useState({ lat: null, lng: null });
@@ -205,7 +206,11 @@ const Signup = () => {
   };
 
 
-const siteKeyx=process.env.YOUR_SITE_KEY
+const siteKeyx = process.env.REACT_APP_TURNSTILE_SITE_KEY
+if (!turnstileToken) {
+  Toast.fire({ icon: 'warning', title: 'Please complete the verification.' });
+  return;
+}
 
 
   return (
@@ -219,7 +224,12 @@ const siteKeyx=process.env.YOUR_SITE_KEY
           e.preventDefault()
           Signup()
         }}>
-          <Turnstile siteKey={siteKeyx} onSuccess={(t) => setTurnstileToken(t)} />
+        <Turnstile
+          siteKey={siteKeyx}
+          onSuccess={(t) => setTurnstileToken(t)}
+          onExpire={() => setTurnstileToken('')}
+          onError={() => setTurnstileToken('')}
+        />
           <img src="/chartsynchlogo4.jpeg" alt="ChartSynch Logo" className="signup-logo" onClick={() => {
             navigate('/')
           }} />
