@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import Loader from '../Loader'
 import { IoMdNotifications } from "react-icons/io";
-import { FaUserAlt, FaAngleDown, FaEllipsisH } from "react-icons/fa";
+import { FaUserAlt, FaAngleDown, FaEllipsisH, FaUserCheck } from "react-icons/fa";
 import { MdClose } from 'react-icons/md'
 import AdminHeader from '../AdminHeader'
 import { RxUpload } from 'react-icons/rx'
@@ -229,6 +229,7 @@ const Admindashboard = () => {
   const [showCreateTrader, setShowCreateTrader] = useState(false)
   const [showTraderLogs, setShowTraderLogs] = useState(false)
   const [showUsers, setShowUsers] = useState(true)
+  const [showKyc, setShowKyc] = useState(false)
   const [showSecurity, setShowSecurity] = useState(false)
   const [securityTab, setSecurityTab] = useState('trash')
   const [deletedUsers, setDeletedUsers] = useState([])
@@ -272,6 +273,7 @@ const Admindashboard = () => {
   }
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
+  const [selectedKyc, setSelectedKyc] = useState(null)
 
   useEffect(() => {
     const closeActionMenu = () => setActiveActionMenu(null);
@@ -300,12 +302,14 @@ const Admindashboard = () => {
     setShowCreateTrader(true)
     setShowTraderLogs(false)
     setShowUsers(false)
+    setShowKyc(false)
     setShowSecurity(false)
   }
   const openTraderLogs = () => {
     setShowTraderLogs(true)
     setShowUsers(false)
     setShowCreateTrader(false)
+    setShowKyc(false)
     setShowSecurity(false)
   }
 
@@ -313,7 +317,16 @@ const Admindashboard = () => {
     setShowCreateTrader(false)
     setShowTraderLogs(false)
     setShowSecurity(false)
+    setShowKyc(false)
     setShowUsers(true)
+  }
+
+  const openKyc = () => {
+    setShowCreateTrader(false)
+    setShowTraderLogs(false)
+    setShowUsers(false)
+    setShowSecurity(false)
+    setShowKyc(true)
   }
 
   const fetchDeletedUsers = async () => {
@@ -335,6 +348,7 @@ const Admindashboard = () => {
     setShowCreateTrader(false)
     setShowTraderLogs(false)
     setShowUsers(false)
+    setShowKyc(false)
     setShowSecurity(true)
     fetchDeletedUsers()
     fetchDeletedTraders()
@@ -717,6 +731,12 @@ const Admindashboard = () => {
           }}>
             <GiReceiveMoney />
             <p>update logs</p>
+          </div>
+          <div className="dropdown-tabs" onClick={() => {
+            openKyc()
+          }}>
+            <FaUserCheck />
+            <p>kyc review</p>
           </div>
           <div className="dropdown-tabs" onClick={() => {
             openSecurity()
@@ -1166,7 +1186,7 @@ const Admindashboard = () => {
             </motion.div>
           }
           <main className='homewrapper'>
-            <AdminHeader openCreateTrader={openCreateTrader} openTraderLogs={openTraderLogs} openUsers={openUsers} openSecurity={openSecurity} />
+            <AdminHeader openCreateTrader={openCreateTrader} openTraderLogs={openTraderLogs} openUsers={openUsers} openKyc={openKyc} openSecurity={openSecurity} />
             <section className='dashboardhomepage'>
               <div className="dashboardheaderwrapper">
                 <div className="header-notification-icon-container">
@@ -1391,6 +1411,139 @@ const Admindashboard = () => {
                   }
                 </>
               }
+              {showKyc && (
+                <>
+                  <section className="page-header admin-page-header">
+                    <h3>Compliance</h3>
+                    <h2>KYC Review</h2>
+                    <p>Review every submitted identity verification, including approved applications.</p>
+                  </section>
+
+                  <div className="admin-stats-row kyc-stats-row">
+                    <div className="admin-stat-card">
+                      <span className="stat-label">Awaiting review</span>
+                      <span className="stat-value warning">{Array.isArray(users) ? users.filter((user) => user.kycStatus === 'processing').length : 0}</span>
+                    </div>
+                    <div className="admin-stat-card">
+                      <span className="stat-label">Approved</span>
+                      <span className="stat-value accent">{Array.isArray(users) ? users.filter((user) => user.kycStatus === 'approved').length : 0}</span>
+                    </div>
+                    <div className="admin-stat-card">
+                      <span className="stat-label">Rejected</span>
+                      <span className="stat-value">{Array.isArray(users) ? users.filter((user) => user.kycStatus === 'rejected').length : 0}</span>
+                    </div>
+                  </div>
+
+                  <div className="transaction-container no-ref dash-b">
+                    <div className="dashboard-table-container">
+                      <table className="fintech-table kyc-review-table">
+                        <thead>
+                          <tr>
+                            <th>Applicant</th>
+                            <th>Identity details</th>
+                            <th>Documents</th>
+                            <th>Status</th>
+                            <th className="text-right">Review</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.isArray(users) && users.filter((user) => user.kycStatus && user.kycStatus !== 'not_submitted').map((user) => {
+                            const documents = [
+                              ['ID front', user.idDocumentFront],
+                              ['ID back', user.idDocumentBack],
+                              ['Proof of address', user.proofOfAddress],
+                              ['Selfie', user.selfiePhoto],
+                            ].filter(([, url]) => Boolean(url))
+
+                            return (
+                              <tr key={user._id || user.email}>
+                                <td>
+                                  <div className="user-cell">
+                                    <span className="user-name">{user.firstname} {user.lastname}</span>
+                                    <span className="user-email">{user.email}</span>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="user-cell">
+                                    <span>{user.idType || 'Identity document'} {user.idNumber ? `• ${user.idNumber}` : ''}</span>
+                                    <span className="user-email">{[user.city, user.nationality].filter(Boolean).join(', ') || 'No location supplied'}</span>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="kyc-document-links">
+                                    {documents.length ? documents.map(([label, url]) => (
+                                      <a key={label} href={url} target="_blank" rel="noreferrer" className="kyc-document-link">{label}</a>
+                                    )) : <span className="user-email">No documents supplied</span>}
+                                  </div>
+                                </td>
+                                <td>
+                                  <span className={`status-badge status-${user.kycStatus}`}>
+                                    {user.kycStatus.replace('_', ' ')}
+                                  </span>
+                                </td>
+                                <td className="text-right">
+                                  <div className="kyc-review-actions">
+                                    <button className="kyc-review-btn view" onClick={() => setSelectedKyc(user)}>View submission</button>
+                                    {user.kycStatus === 'processing' && <>
+                                      <button className="kyc-review-btn approve" onClick={() => approveKYC(user)}>Approve</button>
+                                      <button className="kyc-review-btn reject" onClick={() => rejectKYC(user.email)}>Reject</button>
+                                    </>}
+                                  </div>
+                                </td>
+                              </tr>
+                            )
+                          })}
+                          {(!Array.isArray(users) || users.filter((user) => user.kycStatus && user.kycStatus !== 'not_submitted').length === 0) && (
+                            <tr><td className="kyc-empty-state" colSpan="5">There are no submitted KYC applications.</td></tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {selectedKyc && (
+                    <div className="modal-container" onClick={() => setSelectedKyc(null)}>
+                      <div className="modal kyc-submission-modal" onClick={(event) => event.stopPropagation()}>
+                        <div className="modal-header">
+                          <h2>KYC submission</h2>
+                        </div>
+                        <MdClose className="close-modal-btn" onClick={() => setSelectedKyc(null)} />
+                        <div className="kyc-submission-section">
+                          <h3>Applicant</h3>
+                          <div className="detail-row"><span>Name</span><span>{[selectedKyc.firstname, selectedKyc.middlename, selectedKyc.lastname].filter(Boolean).join(' ')}</span></div>
+                          <div className="detail-row"><span>Email</span><span>{selectedKyc.email}</span></div>
+                          <div className="detail-row"><span>Date of birth</span><span>{selectedKyc.dateOfBirth || 'Not supplied'}</span></div>
+                          <div className="detail-row"><span>Nationality</span><span>{selectedKyc.nationality || 'Not supplied'}</span></div>
+                          <div className="detail-row"><span>Address</span><span>{[selectedKyc.address, selectedKyc.city].filter(Boolean).join(', ') || 'Not supplied'}</span></div>
+                        </div>
+                        <div className="kyc-submission-section">
+                          <h3>Financial information</h3>
+                          <div className="detail-row"><span>Employment</span><span>{selectedKyc.employmentStatus || 'Not supplied'}</span></div>
+                          <div className="detail-row"><span>Occupation</span><span>{selectedKyc.occupation || 'Not supplied'}</span></div>
+                          <div className="detail-row"><span>Annual income</span><span>{selectedKyc.annualIncome || 'Not supplied'}</span></div>
+                          <div className="detail-row"><span>Source of funds</span><span>{selectedKyc.sourceOfFunds || 'Not supplied'}</span></div>
+                          <div className="detail-row"><span>Experience</span><span>{selectedKyc.investmentExperience || 'Not supplied'}</span></div>
+                        </div>
+                        <div className="kyc-submission-section">
+                          <h3>Identity documents</h3>
+                          <div className="detail-row"><span>Document</span><span>{selectedKyc.idType || 'Not supplied'} {selectedKyc.idNumber ? `• ${selectedKyc.idNumber}` : ''}</span></div>
+                          <div className="detail-row"><span>Expiry date</span><span>{selectedKyc.idExpiry || 'Not supplied'}</span></div>
+                          <div className="kyc-document-links kyc-modal-documents">
+                            {[
+                              ['ID front', selectedKyc.idDocumentFront],
+                              ['ID back', selectedKyc.idDocumentBack],
+                              ['Proof of address', selectedKyc.proofOfAddress],
+                              ['Selfie', selectedKyc.selfiePhoto],
+                            ].filter(([, url]) => Boolean(url)).map(([label, url]) => (
+                              <a key={label} href={url} target="_blank" rel="noreferrer" className="kyc-document-link">Open {label}</a>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
               {
                 showCreateTrader &&
                 <div className="create-trader-section">

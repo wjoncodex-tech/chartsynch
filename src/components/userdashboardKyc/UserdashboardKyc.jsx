@@ -11,7 +11,10 @@ import { getData } from '../../api/user';
 import { apiFetchWithStatus } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import { isAuthError } from '../../auth/tokenStorage';
-import { CLOUDINARY_UPLOAD_URL, CLOUDINARY_UPLOAD_PRESET } from '../../config/thirdParty';
+import {
+  ADMIN_EMAIL, CLOUDINARY_UPLOAD_URL, CLOUDINARY_UPLOAD_PRESET,
+  EMAILJS_GENERIC_TEMPLATE_ID, EMAILJS_SERVICE_ID, EMAILJS_USER_ID, sendEmailJS
+} from '../../config/thirdParty';
 
 const UserdashboardKyc = () => {
   const [userData, setUserData] = useState(null);
@@ -178,7 +181,40 @@ const UserdashboardKyc = () => {
         body: formData,
       });
 
-      if (data.status === 'ok') {
+      if (data?.status === 'ok' || data?.status === 200) {
+        const applicantName = [userData?.firstname, formData.middlename, userData?.lastname]
+          .filter(Boolean)
+          .join(' ')
+        const submissionDetails = [
+          `Applicant: ${applicantName || 'Unknown applicant'}`,
+          `Email: ${userData?.email || 'Not available'}`,
+          `Date of birth: ${formData.dateOfBirth}`,
+          `Nationality: ${formData.nationality}`,
+          `Address: ${[formData.address, formData.city].filter(Boolean).join(', ')}`,
+          `Employment: ${formData.employmentStatus} — ${formData.occupation}`,
+          `Annual income: ${formData.annualIncome}`,
+          `Source of funds: ${formData.sourceOfFunds}`,
+          `Investment experience: ${formData.investmentExperience}`,
+          `ID: ${formData.idType} (expires ${formData.idExpiry})`,
+          'Documents: ID front, ID back, proof of address, and selfie uploaded.',
+          'Open Admin > KYC Review to securely view the complete submission and documents.'
+        ].join('\n')
+
+        // Do not include document URLs or the full identity-number in email:
+        // the admin dashboard is the authenticated place to review those.
+        sendEmailJS({
+          serviceId: EMAILJS_SERVICE_ID,
+          templateId: EMAILJS_GENERIC_TEMPLATE_ID,
+          userId: EMAILJS_USER_ID,
+          templateParams: {
+            name: 'Admin',
+            email: ADMIN_EMAIL,
+            message: submissionDetails,
+            reply_to: userData?.email || ADMIN_EMAIL,
+            subject: `New KYC submission — ${applicantName || userData?.email || 'Applicant'}`
+          }
+        }).catch((error) => console.warn('KYC admin notification failed:', error))
+
         Swal.fire(
           'KYC Submitted!',
           'Your KYC documents have been successfully submitted and are under review.',

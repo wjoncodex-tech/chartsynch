@@ -13,10 +13,10 @@ import {FiLogOut} from 'react-icons/fi'
 import {AiOutlineClose} from 'react-icons/ai'
 import {GiReceiveMoney} from 'react-icons/gi'
 import {RxDashboard} from 'react-icons/rx'
-import {FaUserFriends,FaRegChartBar} from 'react-icons/fa'
+import {FaUserFriends,FaRegChartBar,FaUserCheck} from 'react-icons/fa'
 import { getData } from '../api/user'
 import { useAuth } from '../context/AuthContext'
-const AdminHeader = ({openCreateTrader,openTraderLogs,openUsers,openSecurity}) => {
+const AdminHeader = ({openCreateTrader,openTraderLogs,openUsers,openKyc,openSecurity}) => {
     const navigate = useNavigate()
     const [dropDown,setDropDown] = useState(false)
     const [userData, setUserData] = useState()
@@ -151,6 +151,12 @@ const AdminHeader = ({openCreateTrader,openTraderLogs,openUsers,openSecurity}) =
                 <FaRegChartBar />
               </div>
               <p>Trader Logs</p>
+            </li>
+            <li className="dashboard-links" onClick={() => openKyc()}>
+              <div className="dashboard-svg-container">
+                <FaUserCheck />
+              </div>
+              <p>KYC Review</p>
             </li>
             <li className="dashboard-links" onClick={() => openSecurity()}>
               <div className="dashboard-svg-container">

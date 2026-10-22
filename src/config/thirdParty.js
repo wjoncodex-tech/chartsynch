@@ -11,6 +11,9 @@ export const EMAILJS_SERVICE_ID = 'service_xvf59us'
 export const EMAILJS_USER_ID = 'ee7CtMRdf3w3NMhRi'
 export const EMAILJS_VERIFY_TEMPLATE_ID = 'template_1lc11k1'
 export const EMAILJS_GENERIC_TEMPLATE_ID = 'template_g6y6gxq'
+// Used for operational notifications such as new KYC submissions. Set
+// REACT_APP_ADMIN_EMAIL in the deployment environment to change the recipient.
+export const ADMIN_EMAIL = process.env.REACT_APP_ADMIN_EMAIL || 'support@chartsynch.com'
 
 // Separate EmailJS account, used only by OtpVerification.jsx's welcome mail.
 export const EMAILJS_OTP_SERVICE_ID = 'service_xvf59us'
