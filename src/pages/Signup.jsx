@@ -114,6 +114,13 @@ const Signup = () => {
     }
 
     setLoader(true);
+    if (!turnstileToken) {
+      Toast.fire({
+        icon: 'warning',
+        title: 'Please complete the human verification.',
+      });
+      return;
+    }
 
     try {
       const referringUser = localStorage.getItem('referedUser') || '';
@@ -128,7 +135,8 @@ const Signup = () => {
         server: null,
         location,
         deviceName,
-        country
+        country,
+        turnstileToken
       });
 
       setLoader(false);
@@ -207,10 +215,6 @@ const Signup = () => {
 
 
 const siteKeyx = process.env.REACT_APP_TURNSTILE_SITE_KEY
-// if (!turnstileToken) {
-//   Toast.fire({ icon: 'warning', title: 'Please complete the verification.' });
-//   return;
-// }
 
 
   return (
