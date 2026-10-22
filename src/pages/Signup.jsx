@@ -207,10 +207,10 @@ const Signup = () => {
 
 
 const siteKeyx = process.env.REACT_APP_TURNSTILE_SITE_KEY
-if (!turnstileToken) {
-  Toast.fire({ icon: 'warning', title: 'Please complete the verification.' });
-  return;
-}
+// if (!turnstileToken) {
+//   Toast.fire({ icon: 'warning', title: 'Please complete the verification.' });
+//   return;
+// }
 
 
   return (
